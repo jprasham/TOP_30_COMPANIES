@@ -63,12 +63,12 @@ pct_cols = [ "EDITDA/EV", "GROSS PROFIT/EV", "EPS TRAILING RANK", "EPS FORWARD R
 for c in pct_cols:
     if c in value_df.columns:
         value_df[c] = coerce_percent(value_df[c])
+value_df = value_df[["TICKER", "COMPANY", "EPS TRAILING", "EPS FORWARD", "FCF YIELD", "EDITDA/EV", "GROSS PROFIT/EV",  "EPS TRAILING RANK", "EPS FORWARD RANK", "FCF YIELD RANK", "EDITDA/EV RANK", "PROFIT/EV RANK", "VALUE RANK"]]
+#value_param = value_df[["TICKER", "COMPANY", "EPS TRAILING", "EPS FORWARD", "FCF YIELD", "EDITDA/EV", "GROSS PROFIT/EV"]]
+#value_rank = value_df[["TICKER", "EPS TRAILING RANK", "EPS FORWARD RANK", "FCF YIELD RANK", "EDITDA/EV RANK", "PROFIT/EV RANK", "VALUE RANK"]]
 
-value_param = value_df[["TICKER", "COMPANY", "EPS TRAILING", "EPS FORWARD", "FCF YIELD", "EDITDA/EV", "GROSS PROFIT/EV"]]
-value_rank = value_df[["TICKER", "EPS TRAILING RANK", "EPS FORWARD RANK", "FCF YIELD RANK", "EDITDA/EV RANK", "PROFIT/EV RANK", "VALUE RANK"]]
-
-styler_value_param = (
-    value_param.style
+styler_value = (
+    value_df.style
       .format({
           **{c: "{:.1%}" for c in pct_cols},
           "EPS TRAILING": "{:.1f}",
@@ -77,23 +77,10 @@ styler_value_param = (
       }, na_rep="-")
 )
 
-styler_value_rank = (
-    value_rank.style
-      .format({
-          **{c: "{:.1%}" for c in pct_cols}
-      }, na_rep="-")
-)
-
 st.subheader("VALUE MODEL")
 
-# Use Streamlit columns to display the DATAFRAME
-col1, col2 = st.columns(2)
+st.dataframe(styler_value, hide_index = True)
 
-with col1:
-    st.dataframe(styler_value_param, hide_index = True)
-
-with col2:
-    st.dataframe(styler_value_rank, hide_index = True)
 	
 
 
