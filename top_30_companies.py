@@ -129,4 +129,29 @@ st.subheader("QUALITY MODEL")
 
 st.dataframe(styler_quality, hide_index = True)
 
+# -------------------------------------------  PRICE MOMENTUM -------------------------------------------------
+price_df = load_excel_data(excel_file, price_mom_sheet, price_cols, 1, nrows=None)	
+
+pct_cols = [ "PRICE/52W_HIGH", "PRICE/52W_H RANK", "3M RANK", "6M RANK", "PRICE MOM RANK" ]
+for c in pct_cols:
+    if c in price_df.columns:
+        price_df[c] = coerce_percent(price_df[c])
+
+price_df = price_df[["TICKER", "COMPANY", "3M_RETURNS", "6M_RETURNS", "12M_RETURNS", "PRICE/52W_HIGH", "PRICE/52W_H RANK", "3M RANK", "6M RANK", "PRICE MOM RANK" ]]
+
+
+styler_price = (
+    price_df.style
+      .format({
+          **{c: "{:.1%}" for c in pct_cols},
+          "3M_RETURNS": "{:.1f}",
+          "6M_RETURNS": "{:.1f}",
+          "12M_RETURNS": "{:.1f}"
+      }, na_rep="-")
+)
+
+st.subheader("PRICE MOMENTUM MODEL")
+
+st.dataframe(styler_price, hide_index = True)
+
 
