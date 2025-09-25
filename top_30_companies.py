@@ -154,6 +154,27 @@ st.subheader("PRICE MOMENTUM MODEL")
 
 st.dataframe(styler_price, hide_index = True)
 
+# -------------------------------------------  BIZ MOMENTUM -------------------------------------------------
+biz_df = load_excel_data(excel_file, biz_mom_sheet, biz_cols, 1, nrows=None)	
+
+pct_cols = [ "SALES", "PROFIT", "PROFIT MARGIN", "BIZ MOM RANK"]
+for c in pct_cols:
+    if c in biz_df.columns:
+        biz_df[c] = coerce_percent(biz_df[c])
+
+biz_df = biz_df[["TICKER", "COMPANY", "SALES", "PROFIT", "PROFIT MARGIN", "BIZ MOM RANK"  ]]
+
+styler_biz = (
+    biz_df.style
+      .format({
+          **{c: "{:.1%}" for c in pct_cols}
+      }, na_rep="-")
+)
+
+st.subheader("BUSINESS MOMENTUM MODEL")
+
+st.dataframe(styler_biz, hide_index = True)
+
 # -------------------------------------------  SAFETY -------------------------------------------------
 safety_df = load_excel_data(excel_file, safety_sheet, safety_cols, 1, nrows=None)	
 
@@ -175,5 +196,7 @@ styler_safety = (
 st.subheader("SAFETY MODEL")
 
 st.dataframe(styler_safety, hide_index = True)
+
+
 
 
