@@ -58,7 +58,7 @@ def coerce_percent(col: pd.Series) -> pd.Series:
     return pd.to_numeric(cleaned, errors='coerce') / 100.0
 
 # -------------------------------------------  OUTPUT -------------------------------------------------
-output_df = load_excel_data(excel_file, output_sheet, output_cols, 0, nrows=None)	
+output_df = load_excel_data(excel_file, output_sheet, output_cols, 1, nrows=None)	
 
 pct_cols = [ "VALUE", "QUALITY", "PRICE MOMENTUM", "SAFETY", "BIZ MOMENTUM", "CONSOLIDATED RANK" ]
 for c in pct_cols:
