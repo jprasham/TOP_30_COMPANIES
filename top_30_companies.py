@@ -154,4 +154,26 @@ st.subheader("PRICE MOMENTUM MODEL")
 
 st.dataframe(styler_price, hide_index = True)
 
+# -------------------------------------------  SAFETY -------------------------------------------------
+safety_df = load_excel_data(excel_file, safety_sheet, safety_cols, 1, nrows=None)	
+
+pct_cols = [ "DRAWDOWN FREQ MONTHLY", "DRAWDOWN FREQ YEARLY", "DRAWDOWN MONTHLY RANK", "DRAWDOWN YEARLY RANK", "12M RETURN RANK", "SAFETY RANK" ]
+for c in pct_cols:
+    if c in safety_df.columns:
+        safety_df[c] = coerce_percent(safety_df[c])
+
+safety_df = safety_df[["TICKER", "COMPANY", "DRAWDOWN FREQ MONTHLY", "DRAWDOWN FREQ YEARLY", "12M RETURN PERCENTILE", "DRAWDOWN MONTHLY RANK", "DRAWDOWN YEARLY RANK", "12M RETURN RANK", "SAFETY RANK"  ]]
+
+styler_safety = (
+    safety_df.style
+      .format({
+          **{c: "{:.1%}" for c in pct_cols},
+          "12M RETURN PERCENTILE": "{:.1f}"
+      }, na_rep="-")
+)
+
+st.subheader("SAFETY MODEL")
+
+st.dataframe(styler_safety, hide_index = True)
+
 
