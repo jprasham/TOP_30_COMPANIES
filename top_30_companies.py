@@ -12,11 +12,11 @@ st.header('TOP 30 COMPANIES')
 st.markdown('#### Updated: 25/09/2025')
 
 excel_file = 'TOP30COMPANIES.xlsx'
-value = 'VALUE'
-quality = 'QUALITY'
-price_mom = 'PRICE MOMENTUM'
-safety = 'SAFETY'
-biz_mom = 'BIZ MOMENTUM'
+value_sheet = 'VALUE'
+quality_sheet = 'QUALITY'
+price_mom_sheet = 'PRICE MOMENTUM'
+safety_sheet = 'SAFETY'
+biz_mom_sheet = 'BIZ MOMENTUM'
 
 value_cols = "A:N"
 quality_cols = "A:L"
@@ -57,35 +57,45 @@ def coerce_percent(col: pd.Series) -> pd.Series:
 
 
 # ---------- Load & Clean ----------
-df = load_excel_data(excel_file, value, value_cols, 1, nrows=None)
+value_df = load_excel_data(excel_file, value_sheet, value_cols, 1, nrows=None)	
 
-# Ensure exact column order (rename if your sheet uses spaces/variants)
-#expected = ["ETF", "COUNTRY", "CATEGORY", "CURRENT_RETURNS", "MEAN", "STD_DEV", "2_SIGMA", "CURRENT_PRICE", "200_DMA"]
-#df.columns = expected  # if your headers already match, this is a no-op
-
-# Coerce percentage columns
-				
-
-pct_cols = [ "EDITDA/EV", "GROSS PROFIT/EV", "EPS TRAILING RANK", "EPS FORWARD RANK", "FCF YIELD RANK", "EDITDA/EV RANK", "PROFIT/EV RANK", "VALUE RANK"]
+pct_cols = [ "EDITDA/EV", "GROSS PROFIT/EV", "EPS TRAILING RANK", "EPS FORWARD RANK", "FCF YIELD RANK", "EDITDA/EV RANK", "PROFIT/EV RANK", "VALUE RANK" ]
 for c in pct_cols:
     if c in df.columns:
         df[c] = coerce_percent(df[c])
 
-# ---------- Display (styled like the screenshot) ----------
-# Use pandas Styler for bold ETF and percentage formatting
-styler = (
-    df.style
+value_param = value_df[["TICKER", "COMPANY", "EPS TRAILING", "EPS FORWARD", "FCF YIELD", "EDITDA/EV", "GROSS PROFIT/EV"]]
+value_rank = value_df[["TICKER", "COMPANY", "EPS TRAILING RANK", "EPS FORWARD RANK", "FCF YIELD RANK", "EDITDA/EV RANK", "PROFIT/EV RANK", "VALUE RANK"]]
+
+styler_value_param = (
+    value_param.style
       .format({
           **{c: "{:.1%}" for c in pct_cols},
           "EPS TRAILING": "{:.1f}",
           "EPS FORWARD": "{:.1f}",
-          "FCF YIELD" : "{:.1f}"
+          "FCF YIELD": "{:.1f}"
       }, na_rep="-")
-      .hide(axis="index")
+)
+
+styler_value_rank = (
+    value_rank.style
+      .format({
+          **{c: "{:.1%}" for c in pct_cols}
+      }, na_rep="-")
 )
 
 st.subheader("VALUE MODEL")
 
-st.dataframe(styler, hide_index = True)
+# Use Streamlit columns to display the DATAFRAME
+col1, col2 = st.columns(2)
+
+with col1:
+    st.dataframe(styler_value_param, hide_index = True)
+
+with col2:
+    st.dataframe(styler_value_rank, hide_index = True)
+	
+
+
 
 
