@@ -12,12 +12,14 @@ st.header('TOP 30 COMPANIES')
 st.markdown('#### Updated: 25/09/2025')
 
 excel_file = 'TOP30COMPANIES.xlsx'
+output_sheet = "OUTPUT"
 value_sheet = 'VALUE'
 quality_sheet = 'QUALITY'
 price_mom_sheet = 'PRICE MOMENTUM'
 safety_sheet = 'SAFETY'
 biz_mom_sheet = 'BIZ MOMENTUM'
 
+output_cols = "A:K"
 value_cols = "A:N"
 quality_cols = "A:L"
 price_cols = "A:L"
@@ -55,6 +57,27 @@ def coerce_percent(col: pd.Series) -> pd.Series:
     )
     return pd.to_numeric(cleaned, errors='coerce') / 100.0
 
+# -------------------------------------------  OUTPUT -------------------------------------------------
+output_df = load_excel_data(excel_file, output_sheet, output_cols, 0, nrows=None)	
+
+pct_cols = [ "VALUE", "QUALITY", "PRICE MOMENTUM", "SAFETY", "BIZ MOMENTUM", "CONSOLIDATED RANK" ]
+for c in pct_cols:
+    if c in output_df.columns:
+        output_df[c] = coerce_percent(output_df[c])
+		
+output_df = output_df[["TICKER", "COMPANY", "COUNTRY", "VALUE", "QUALITY", "PRICE MOMENTUM", "SAFETY", "BIZ MOMENTUM", "CONSOLIDATED RANK"]]
+
+
+styler_output = (
+    output_df.style
+      .format({
+          **{c: "{:.1%}" for c in pct_cols}
+      }, na_rep="-")
+)
+
+st.subheader("CONSOLIDATED RANK")
+
+st.dataframe(styler_output, hide_index = True)
 
 # -------------------------------------------  VALUE -------------------------------------------------
 value_df = load_excel_data(excel_file, value_sheet, value_cols, 1, nrows=None)	
@@ -81,10 +104,6 @@ st.subheader("VALUE MODEL")
 
 st.dataframe(styler_value, hide_index = True)
 
-	
-
-
-st.dataframe(styler_value, hide_index = True)
 
 
 
