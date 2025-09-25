@@ -61,8 +61,8 @@ value_df = load_excel_data(excel_file, value_sheet, value_cols, 1, nrows=None)
 
 pct_cols = [ "EDITDA/EV", "GROSS PROFIT/EV", "EPS TRAILING RANK", "EPS FORWARD RANK", "FCF YIELD RANK", "EDITDA/EV RANK", "PROFIT/EV RANK", "VALUE RANK" ]
 for c in pct_cols:
-    if c in df.columns:
-        df[c] = coerce_percent(df[c])
+    if c in value_df.columns:
+        value_df[c] = coerce_percent(value_df[c])
 
 value_param = value_df[["TICKER", "COMPANY", "EPS TRAILING", "EPS FORWARD", "FCF YIELD", "EDITDA/EV", "GROSS PROFIT/EV"]]
 value_rank = value_df[["TICKER", "COMPANY", "EPS TRAILING RANK", "EPS FORWARD RANK", "FCF YIELD RANK", "EDITDA/EV RANK", "PROFIT/EV RANK", "VALUE RANK"]]
