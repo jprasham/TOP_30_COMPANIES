@@ -56,7 +56,7 @@ def coerce_percent(col: pd.Series) -> pd.Series:
     return pd.to_numeric(cleaned, errors='coerce') / 100.0
 
 
-# ---------- Load & Clean ----------
+# -------------------------------------------  VALUE -------------------------------------------------
 value_df = load_excel_data(excel_file, value_sheet, value_cols, 1, nrows=None)	
 
 pct_cols = [ "EDITDA/EV", "GROSS PROFIT/EV", "EPS TRAILING RANK", "EPS FORWARD RANK", "FCF YIELD RANK", "EDITDA/EV RANK", "PROFIT/EV RANK", "VALUE RANK" ]
@@ -83,6 +83,8 @@ st.dataframe(styler_value, hide_index = True)
 
 	
 
+
+st.dataframe(styler_value, hide_index = True)
 
 
 
