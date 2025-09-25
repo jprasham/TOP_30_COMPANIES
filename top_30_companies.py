@@ -3,19 +3,27 @@ import streamlit as st
 from typing import Optional
 
 # Set Streamlit page configuration
-st.set_page_config(page_title='COUNTRY TRADING STRATEGY', page_icon=':bar_chart:', layout = "wide")
+st.set_page_config(page_title='TOP 30 COMPANIES', page_icon=':bar_chart:', layout = "wide")
 
 # Display header for the dashboard
-st.header('COUNTRY TRADING STRATEGY')
+st.header('TOP 30 COMPANIES')
 
 # Display the last update date
-st.markdown('#### Updated: 20/09/2025')
+st.markdown('#### Updated: 25/09/2025')
 
-excel_file = 'COUNTRY_TRADING_STRATEGY_20.xlsx'
-sheet_name1 = 'FILTER1'
-sheet_name2 = 'FILTER2'
-use_cols = "A:I"                          
-header_row = 0                            
+excel_file = 'TOP30COMPANIES.xlsx'
+value = 'VALUE'
+quality = 'QUALITY'
+price_mom = 'PRICE MOMENTUM'
+safety = 'SAFETY'
+biz_mom = 'BIZ MOMENTUM'
+
+value_cols = "A:N"
+quality_cols = "A:L"
+price_cols = "A:L"
+safety_cols = "A:J"
+biz_cols = "A:G"
+                            
 
 # ---------- Helpers ----------
 @st.cache_data
@@ -49,14 +57,16 @@ def coerce_percent(col: pd.Series) -> pd.Series:
 
 
 # ---------- Load & Clean ----------
-df = load_excel_data(excel_file, sheet_name1, use_cols, header_row, nrows=None)
+df = load_excel_data(excel_file, value, value_cols, 1, nrows=None)
 
 # Ensure exact column order (rename if your sheet uses spaces/variants)
-expected = ["ETF", "COUNTRY", "CATEGORY", "CURRENT_RETURNS", "MEAN", "STD_DEV", "2_SIGMA", "CURRENT_PRICE", "200_DMA"]
-df.columns = expected  # if your headers already match, this is a no-op
+#expected = ["ETF", "COUNTRY", "CATEGORY", "CURRENT_RETURNS", "MEAN", "STD_DEV", "2_SIGMA", "CURRENT_PRICE", "200_DMA"]
+#df.columns = expected  # if your headers already match, this is a no-op
 
 # Coerce percentage columns
-pct_cols = ["CURRENT_RETURNS", "MEAN", "STD_DEV", "2_SIGMA"]
+				
+
+pct_cols = [ "EDITDA/EV", "GROSS PROFIT/EV", "EPS TRAILING RANK", "EPS FORWARD RANK", "FCF YIELD RANK", "EDITDA/EV RANK", "PROFIT/EV RANK", "VALUE RANK"]
 for c in pct_cols:
     if c in df.columns:
         df[c] = coerce_percent(df[c])
@@ -67,48 +77,16 @@ styler = (
     df.style
       .format({
           **{c: "{:.1%}" for c in pct_cols},
-          "CURRENT_PRICE": "{:.1f}",
-          "200_DMA": "{:.1f}"
+          "EPS TRAILING": "{:.1f}",
+          "EPS FORWARD": "{:.1f}",
+          "FCF YIELD" : "{:.1f}"
       }, na_rep="-")
-      .set_properties(subset=["ETF"], **{"font-weight": "bold"})
+      .set_properties(subset=["TICKER"], **{"font-weight": "bold"})
       .hide(axis="index")
 )
 
-st.subheader("Countries above 2 Sigma")
-st.markdown(
-    "If buying any of the countries listed below, use a conservative approach and buy in staggered intervals of 3–4 days."
-)
+st.subheader("VALUE MODEL")
+
 st.table(styler)
 
-# ---------- Load & Clean ----------
-df = load_excel_data(excel_file, sheet_name2, use_cols, header_row, nrows=None)
 
-# Ensure exact column order (rename if your sheet uses spaces/variants)
-expected = ["ETF", "COUNTRY", "CATEGORY", "CURRENT_RETURNS", "MEAN", "STD_DEV", "2_SIGMA", "CURRENT_PRICE", "200_DMA"]
-df.columns = expected  # if your headers already match, this is a no-op
-
-# Coerce percentage columns
-pct_cols = ["CURRENT_RETURNS", "MEAN", "STD_DEV", "2_SIGMA"]
-for c in pct_cols:
-    if c in df.columns:
-        df[c] = coerce_percent(df[c])
-
-# ---------- Display (styled like the screenshot) ----------
-# Use pandas Styler for bold ETF and percentage formatting
-styler = (
-    df.style
-      .format({
-          **{c: "{:.1%}" for c in pct_cols},
-          "CURRENT_PRICE": "{:.1f}",
-          "200_DMA": "{:.1f}"
-      }, na_rep="-")
-      .set_properties(subset=["ETF"], **{"font-weight": "bold"})
-      .hide(axis="index")
-)
-
-st.subheader("Countries below 2 Sigma")
-st.markdown(
-    "Countries trading below their 2-sigma threshold of monthly returns "
-    "may be considered for aggressive buying."
-)
-st.table(styler)
