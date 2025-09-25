@@ -81,12 +81,11 @@ styler = (
           "EPS FORWARD": "{:.1f}",
           "FCF YIELD" : "{:.1f}"
       }, na_rep="-")
-      .set_properties(subset=["TICKER"], **{"font-weight": "bold"})
       .hide(axis="index")
 )
 
 st.subheader("VALUE MODEL")
 
-st.table(styler)
+st.dataframe(styler)
 
 
