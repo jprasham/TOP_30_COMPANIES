@@ -86,6 +86,6 @@ styler = (
 
 st.subheader("VALUE MODEL")
 
-st.dataframe(styler)
+st.dataframe(styler, hide_index = True)
 
 
