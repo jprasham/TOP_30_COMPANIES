@@ -22,7 +22,7 @@ biz_mom_sheet = 'BIZ MOMENTUM'
 output_cols = "A:K"
 value_cols = "A:N"
 quality_cols = "A:L"
-price_cols = "A:L"
+price_cols = "A:K"
 safety_cols = "A:J"
 biz_cols = "A:G"
                             
