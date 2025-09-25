@@ -104,6 +104,29 @@ st.subheader("VALUE MODEL")
 
 st.dataframe(styler_value, hide_index = True)
 
+# -------------------------------------------  QUALITY -------------------------------------------------
+quality_df = load_excel_data(excel_file, quality_sheet, quality_cols, 1, nrows=None)	
 
+pct_cols = [ "EARNINGS TRACK RECORD", "ROE RANK", "EARNINGS RANK", "DRAWDOWN RANK", "GM RANK", "QUALITY RANK" ]
+for c in pct_cols:
+    if c in quality_df.columns:
+        quality_df[c] = coerce_percent(quality_df[c])
+		
+quality_df = quality_df[["TICKER", "COMPANY", "AVG ROE", "EARNINGS TRACK RECORD", "WORST DRAWDOWN", "AVG GROSS MARGIN", "ROE RANK", "EARNINGS RANK", "DRAWDOWN RANK", "GM RANK", "QUALITY RANK" ]]
+
+
+styler_quality = (
+    quality_df.style
+      .format({
+          **{c: "{:.1%}" for c in pct_cols},
+          "AVG ROE": "{:.1f}",
+          "WORST DRAWDOWN": "{:.1f}",
+          "AVG GROSS MARGIN": "{:.1f}"
+      }, na_rep="-")
+)
+
+st.subheader("QUALITY MODEL")
+
+st.dataframe(styler_quality, hide_index = True)
 
 
